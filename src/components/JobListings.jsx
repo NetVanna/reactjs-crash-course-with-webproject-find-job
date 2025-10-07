@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
-import jobs from "../jobs.json";
 import JobList from "./JobList";
+import Spinner from "./Spinner";
 const JobListings = ({ isHome = false }) => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     const fetchJobs = async () => {
+      const apiUrl = isHome ? "/api/jobs?_limit=3" : "/api/jobs";
       try {
-        const res = await fetch("http://localhost:8000/jobs");
+        const res = await fetch(apiUrl);
         const data = await res.json();
         setJobs(data);
       } catch (error) {
@@ -26,6 +27,12 @@ const JobListings = ({ isHome = false }) => {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Job Listing 1 */}
+          {loading && (
+            <div className="col-span-3 flex justify-center items-center py-10">
+              <Spinner />
+            </div>
+          )}
+
           {jobs.map((job) => (
             <JobList key={job.id} job={job} />
           ))}
